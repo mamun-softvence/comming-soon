@@ -1,40 +1,153 @@
 "use client";
 
-import React from "react";
-import { motion, type Variants } from "framer-motion";
+import React, { useState, useRef } from "react";
+import {
+  motion,
+  type Variants,
+  AnimatePresence,
+  useMotionValue,
+  useSpring,
+} from "framer-motion";
+import ConstellationCanvas from "@/components/ConstellationCanvas";
+import CursorGlow from "@/components/CursorGlow";
+import AtelierHeader from "@/components/AtelierHeader";
+import CapabilityCard, { type ServiceItem } from "@/components/CapabilityCard";
+import LaunchCountdown from "@/components/LaunchCountdown";
+import BorderBeam from "@/components/BorderBeam";
 
-const services = [
+const services: ServiceItem[] = [
   {
-    title: "Branding & Visuals",
-    description: "Identity systems, logos, guidelines and visual language that make a brand instantly recognizable.",
+    id: "01",
+    tag: "IDENTITY",
+    title: "Branding & Visual Systems",
+    description:
+      "Precision design systems, architectural brand books, and iconic foundations engineered for instant global recognition.",
+    category: "media",
+    accentColor: "#00e5ff",
+    icon: (
+      <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75">
+        <circle cx="12" cy="12" r="9" stroke="rgba(255,255,255,0.4)" />
+        <path d="M12 3a9 9 0 0 1 9 9" stroke="#00e5ff" strokeWidth="2" />
+        <circle cx="12" cy="12" r="3" fill="#00e5ff" />
+      </svg>
+    ),
   },
   {
-    title: "Event Planning",
-    description: "End-to-end concept, logistics and on-ground execution for launches, activations and brand events.",
+    id: "02",
+    tag: "MOTION",
+    title: "TVC / OVC / Cine Production",
+    description:
+      "High-definition commercial cinematography, television spots, and digital video production from storyboard to master grade.",
+    category: "media",
+    accentColor: "#ff5370",
+    icon: (
+      <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75">
+        <polygon points="23 7 16 12 23 17 23 7" stroke="#ff5370" strokeWidth="2" fill="rgba(255,83,112,0.15)" />
+        <rect x="1" y="5" width="15" height="14" rx="3" stroke="currentColor" />
+      </svg>
+    ),
   },
   {
-    title: "IMC Planning",
-    description: "Integrated marketing communication strategy that aligns every channel around one clear message.",
+    id: "03",
+    tag: "MEDIA",
+    title: "Commercial Photography",
+    description:
+      "Precision campaign, editorial, and architectural photography capturing evocative narratives across digital and print mediums.",
+    category: "media",
+    accentColor: "#38bdf8",
+    icon: (
+      <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75">
+        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" stroke="currentColor" />
+        <circle cx="12" cy="13" r="4" stroke="#38bdf8" strokeWidth="2" />
+      </svg>
+    ),
   },
   {
-    title: "Photography",
-    description: "Product, lifestyle and campaign photography shot for print, digital and social.",
+    id: "04",
+    tag: "SYSTEMS",
+    title: "Digital Architecture & Web",
+    description:
+      "High-performance bespoke digital platforms, WebGL interactions, and scalable architectures designed to dominate markets.",
+    category: "systems",
+    accentColor: "#818cf8",
+    icon: (
+      <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75">
+        <rect x="2" y="3" width="20" height="14" rx="3" stroke="currentColor" />
+        <line x1="8" y1="21" x2="16" y2="21" stroke="currentColor" />
+        <line x1="12" y1="17" x2="12" y2="21" stroke="currentColor" />
+        <circle cx="6" cy="7" r="1" fill="#00e5ff" />
+        <circle cx="9" cy="7" r="1" fill="#818cf8" />
+      </svg>
+    ),
   },
   {
-    title: "Social Media Management",
-    description: "Content calendars, community management and platform strategy across all major channels.",
+    id: "05",
+    tag: "GROWTH",
+    title: "IMC & Marketing Strategy",
+    description:
+      "Full-funnel omnichannel strategy synchronizing high-impact messaging, media deployment, and conversion acceleration.",
+    category: "growth",
+    accentColor: "#c084fc",
+    icon: (
+      <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75">
+        <line x1="18" y1="20" x2="18" y2="10" stroke="currentColor" />
+        <line x1="12" y1="20" x2="12" y2="4" stroke="#c084fc" strokeWidth="2" />
+        <line x1="6" y1="20" x2="6" y2="14" stroke="currentColor" />
+        <path d="M4 14l8-8 6 6 4-4" stroke="#00e5ff" strokeWidth="1.5" />
+      </svg>
+    ),
   },
   {
-    title: "TVC / OVC / AV",
-    description: "Television, online video and audio-visual production from script to final cut.",
+    id: "06",
+    tag: "ENGAGE",
+    title: "Social Media Systems",
+    description:
+      "Culture-defining content strategies, active brand community governance, and high-cadence distribution engines across platforms.",
+    category: "growth",
+    accentColor: "#00e5ff",
+    icon: (
+      <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75">
+        <circle cx="18" cy="5" r="3" stroke="currentColor" />
+        <circle cx="6" cy="12" r="3" stroke="#00e5ff" strokeWidth="2" fill="rgba(0,229,255,0.15)" />
+        <circle cx="18" cy="19" r="3" stroke="currentColor" />
+        <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" stroke="currentColor" />
+        <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" stroke="currentColor" />
+      </svg>
+    ),
   },
   {
-    title: "BTL Solution",
-    description: "Below-the-line activations — sampling, in-store, roadshows and experiential marketing.",
+    id: "07",
+    tag: "FIELD",
+    title: "Experiential Brand Events",
+    description:
+      "Turnkey spatial conceptualization, logistics, VIP activations, and high-impact physical launches leaving permanent impressions.",
+    category: "activation",
+    accentColor: "#ff5370",
+    icon: (
+      <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75">
+        <polygon
+          points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"
+          stroke="#ff5370"
+          strokeWidth="1.75"
+          fill="rgba(255,83,112,0.1)"
+        />
+      </svg>
+    ),
   },
   {
-    title: "Marketing",
-    description: "Full-funnel marketing strategy, media planning and performance campaigns.",
+    id: "08",
+    tag: "IMPACT",
+    title: "BTL Solutions & Field Ops",
+    description:
+      "Strategic on-ground consumer activations, retail showcases, immersive sampling, and tactical experiential executions at scale.",
+    category: "activation",
+    accentColor: "#00e5ff",
+    icon: (
+      <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75">
+        <circle cx="12" cy="12" r="10" stroke="currentColor" />
+        <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76" stroke="#00e5ff" strokeWidth="2" fill="rgba(0,229,255,0.15)" />
+      </svg>
+    ),
   },
 ];
 
@@ -42,137 +155,345 @@ const containerVariants: Variants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
-    transition: { staggerChildren: 0.08, delayChildren: 0.1 },
+    transition: { staggerChildren: 0.12, delayChildren: 0.15 },
   },
 };
 
 const itemVariants: Variants = {
-  hidden: { opacity: 0, y: 40, filter: "blur(10px)" },
+  hidden: { opacity: 0, y: 30, filter: "blur(10px)" },
   visible: {
     opacity: 1,
     y: 0,
     filter: "blur(0px)",
-    transition: { type: "tween", ease: [0.22, 1, 0.36, 1], duration: 0.8 },
-  },
-};
-
-const badgeVariants: Variants = {
-  hidden: { opacity: 0, scale: 0.9, y: 10, filter: "blur(5px)" },
-  visible: { 
-    opacity: 1, 
-    scale: 1, 
-    y: 0,
-    filter: "blur(0px)",
-    transition: { type: "tween", ease: [0.22, 1, 0.36, 1], duration: 0.6 }
+    transition: { duration: 1.1, ease: [0.16, 1, 0.3, 1] },
   },
 };
 
 export default function Home() {
+  const [email, setEmail] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [token, setToken] = useState("");
+  const waitlistRef = useRef<HTMLDivElement | null>(null);
+
+  // Magnetic button spring physics
+  const btnRef = useRef<HTMLButtonElement | null>(null);
+  const magneticX = useMotionValue(0);
+  const magneticY = useMotionValue(0);
+  const smoothBtnX = useSpring(magneticX, { stiffness: 220, damping: 14 });
+  const smoothBtnY = useSpring(magneticY, { stiffness: 220, damping: 14 });
+
+  const handleMagneticMove = (e: React.MouseEvent<HTMLButtonElement>) => {
+    if (!btnRef.current) return;
+    const rect = btnRef.current.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    magneticX.set((e.clientX - centerX) * 0.28);
+    magneticY.set((e.clientY - centerY) * 0.28);
+  };
+
+  const handleMagneticLeave = () => {
+    magneticX.set(0);
+    magneticY.set(0);
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email || !email.includes("@")) return;
+    setIsSubmitting(true);
+
+    setTimeout(() => {
+      const generatedToken = `#ATL-${Math.floor(1000 + Math.random() * 9000)}-X${Math.floor(Math.random() * 9 + 1)}`;
+      setToken(generatedToken);
+      setIsSubmitting(false);
+      setSubmitted(true);
+    }, 850);
+  };
+
+  const scrollToWaitlist = () => {
+    if (waitlistRef.current) {
+      waitlistRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  };
+
+  // Stardust particle burst generation for celebration
+  const burstParticles = Array.from({ length: 14 }).map((_, i) => {
+    const angle = (i / 14) * Math.PI * 2;
+    const distance = 95 + (i % 3) * 35;
+    return {
+      x: Math.cos(angle) * distance,
+      y: Math.sin(angle) * distance,
+      scale: 0.6 + (i % 4) * 0.25,
+      color: i % 2 === 0 ? "#00e5ff" : "#c084fc",
+    };
+  });
+
   return (
-    <main className="relative min-h-screen w-full overflow-x-hidden flex flex-col items-center py-20 px-4 sm:px-8">
-      {/* Ambient Animated Background Glows using framer-motion for organic feel */}
-      <div className="fixed inset-0 pointer-events-none z-0">
-        <motion.div
-          animate={{
-            scale: [1, 1.2, 1.1, 1],
-            x: [0, 40, -20, 0],
-            y: [0, -50, 20, 0],
-            rotate: [0, 90, 0],
+    <main className="relative min-h-screen w-full flex flex-col items-center justify-between bg-[#030712] text-slate-100 selection:bg-cyan-500/25 selection:text-white">
+      {/* Interactive Ambient Cursor Glow */}
+      <CursorGlow />
+
+      {/* Interactive Background Stardust & Constellation Canvas */}
+      <ConstellationCanvas />
+
+      {/* Atmospheric Aurora Nebulae (Drifting Ambient Mesh) */}
+      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden" aria-hidden="true">
+        {/* Cyan Ambient Glow Orb */}
+        <div className="absolute -top-[15%] left-[10%] w-[650px] sm:w-[850px] h-[650px] sm:h-[850px] rounded-full bg-[radial-gradient(circle,rgba(0,229,255,0.14)_0%,rgba(0,229,255,0.03)_40%,transparent_70%)] blur-3xl animate-aurora-1" />
+
+        {/* Violet Ambient Glow Orb */}
+        <div className="absolute top-[25%] -right-[15%] w-[600px] sm:w-[800px] h-[600px] sm:h-[800px] rounded-full bg-[radial-gradient(circle,rgba(139,92,246,0.13)_0%,rgba(99,102,241,0.03)_40%,transparent_70%)] blur-3xl animate-aurora-2" />
+
+        {/* Soft Rose / Indigo Ambient Glow Orb */}
+        <div className="absolute bottom-[10%] left-[20%] w-[550px] sm:w-[750px] h-[550px] sm:h-[750px] rounded-full bg-[radial-gradient(circle,rgba(255,83,112,0.08)_0%,rgba(139,92,246,0.02)_45%,transparent_70%)] blur-3xl animate-aurora-3" />
+
+        {/* Subtle Architectural Starlight Grid Overlay */}
+        <div
+          className="absolute inset-0 opacity-[0.035]"
+          style={{
+            backgroundImage: `
+              linear-gradient(to right, rgba(255,255,255,0.4) 1px, transparent 1px),
+              linear-gradient(to bottom, rgba(255,255,255,0.4) 1px, transparent 1px)
+            `,
+            backgroundSize: "80px 80px",
           }}
-          transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-          className="absolute top-[5%] left-[-10%] w-[50vw] h-[50vw] rounded-full bg-rose-600/20 mix-blend-screen filter blur-[100px]"
         />
-        <motion.div
-          animate={{
-            scale: [1, 1.3, 0.9, 1],
-            x: [0, -40, 30, 0],
-            y: [0, 50, -30, 0],
-            rotate: [0, -90, 0],
-          }}
-          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-          className="absolute top-[20%] right-[-10%] w-[40vw] h-[40vw] rounded-full bg-amber-600/20 mix-blend-screen filter blur-[100px]"
-        />
-        <motion.div
-          animate={{
-            scale: [1, 1.1, 1.25, 1],
-            x: [0, 20, -40, 0],
-            y: [0, 30, -20, 0],
-          }}
-          transition={{ duration: 18, repeat: Infinity, ease: "linear" }}
-          className="absolute bottom-[10%] left-[20%] w-[60vw] h-[60vw] rounded-full bg-orange-600/15 mix-blend-screen filter blur-[120px]"
-        />
+
+        {/* Fine Noise Texture */}
+        <div className="absolute inset-0 bg-noise" />
       </div>
 
-      {/* Grid Pattern Overlay */}
-      <div className="fixed inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgc3Ryb2tlPSIjZmZmZmZmIiBzdHJva2Utb3BhY2l0eT0iMC4wNSIgZmlsbD0ibm9uZSI+PHBhdGggZD0iTTAgNDBoNDBWMEgwem0wIDBoNDBWMEgwem0wIDBoNDBWMEgwem0wIDBoNDBWMEgweiIvPjwvZz48L3N2Zz4=')] opacity-30 pointer-events-none z-0" />
+      {/* Floating Atelier Navigation Header */}
+      <AtelierHeader onWaitlistClick={scrollToWaitlist} />
 
-      {/* Main Content */}
-      <div className="relative z-10 w-full max-w-6xl mx-auto flex flex-col h-full mt-10 sm:mt-20">
-        
-        <motion.div 
-          className="flex flex-col items-center text-center mb-20 sm:mb-32"
+      {/* Main Experience Container */}
+      <div className="relative z-10 w-full max-w-6xl mx-auto px-4 sm:px-6 flex flex-col items-center flex-grow pt-12 sm:pt-16 pb-20">
+        {/* Hero Section */}
+        <motion.div
+          className="flex flex-col items-center justify-center text-center max-w-4xl mx-auto min-h-[64vh] mb-20 sm:mb-28"
           variants={containerVariants}
           initial="hidden"
           animate="visible"
         >
-          {/* Badge */}
-          <motion.div variants={badgeVariants} className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-white/10 bg-white/5 backdrop-blur-md mb-8 shadow-[0_0_20px_rgba(251,191,36,0.1)]">
-            <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse shadow-[0_0_8px_rgba(251,191,36,0.8)]"></span>
-            <span className="text-xs font-medium uppercase tracking-widest text-neutral-300">Coming Soon</span>
+          {/* Luminous Status Badge */}
+          <motion.div
+            variants={itemVariants}
+            className="inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-white/[0.04] border border-white/15 backdrop-blur-xl mb-4 shadow-[0_0_20px_rgba(0,229,255,0.1)] hover:border-cyan-400/40 transition-colors cursor-default"
+          >
+            <div className="relative flex items-center justify-center">
+              <span className="w-2 h-2 rounded-full bg-cyan-400 animate-ping opacity-75" />
+              <span className="absolute w-2 h-2 rounded-full bg-cyan-400" />
+            </div>
+            <span className="font-mono text-[11px] tracking-[0.25em] text-slate-300 font-semibold uppercase">
+              SYS.STATUS // PHASE ONE ACTIVE
+            </span>
           </motion.div>
-          
-          {/* Hero Title */}
-          <motion.h1 variants={itemVariants} className="font-heading text-5xl sm:text-6xl md:text-8xl font-bold tracking-tight mb-6 leading-[1.1]">
-            Your Vision, <br className="hidden sm:block" />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-rose-400 to-orange-400">
-              Amplified.
+
+          {/* Genesis Launch Countdown Ticker */}
+          <motion.div variants={itemVariants}>
+            <LaunchCountdown />
+          </motion.div>
+
+          {/* Hero Headline */}
+          <motion.h1
+            variants={itemVariants}
+            className="font-heading text-5xl sm:text-7xl md:text-8xl font-black tracking-tight mb-8 leading-[1.08] text-white uppercase"
+          >
+            Crafting Digital{" "}
+            <span className="text-gradient-aurora drop-shadow-[0_0_40px_rgba(0,229,255,0.25)] block sm:inline">
+              Excellence.
             </span>
           </motion.h1>
-          
-          {/* Subtitle */}
-          <motion.p variants={itemVariants} className="max-w-2xl text-lg sm:text-xl text-neutral-400 font-light leading-relaxed">
-            A full-funnel creative agency specializing in brand identity, dynamic media production, and on-ground activations.
+
+          {/* Editorial Value Proposition */}
+          <motion.p
+            variants={itemVariants}
+            className="max-w-2xl text-base sm:text-lg md:text-xl text-slate-300 font-light leading-relaxed mb-12 tracking-wide"
+          >
+            An exclusive digital atelier designing bespoke brand experiences, high-end visual narratives, and sophisticated digital platforms for the world&apos;s most discerning brands.
           </motion.p>
+
+          {/* Waitlist Invitation Terminal Capsule */}
+          <motion.div ref={waitlistRef} variants={itemVariants} className="w-full max-w-xl mt-2 relative">
+            <AnimatePresence mode="wait">
+              {!submitted ? (
+                <motion.form
+                  key="waitlist-form"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.98 }}
+                  onSubmit={handleSubmit}
+                  className="group relative flex flex-col sm:flex-row items-center w-full p-1.5 rounded-2xl sm:rounded-full bg-white/[0.03] border border-white/15 backdrop-blur-2xl transition-all duration-300 shadow-[0_8px_32px_rgba(0,0,0,0.5)] focus-within:border-cyan-400/60 focus-within:shadow-[0_0_40px_rgba(0,229,255,0.3)] focus-within:bg-white/[0.05]"
+                >
+                  {/* Continuous Orbiting Conic Border Beam */}
+                  <BorderBeam
+                    colorFrom="#00e5ff"
+                    colorTo="#c084fc"
+                    duration={10}
+                    size={220}
+                    borderWidth={1.5}
+                    className="opacity-75 group-focus-within:opacity-100 transition-opacity"
+                  />
+
+                  <div className="flex items-center w-full pl-5 pr-3 py-2 sm:py-0 relative z-10">
+                    <span className="text-slate-400 group-focus-within:text-cyan-400 transition-colors shrink-0">
+                      <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75">
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                        <polyline points="22,6 12,13 2,6" />
+                      </svg>
+                    </span>
+                    <input
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="ENTER WORK EMAIL FOR ACCESS"
+                      required
+                      className="w-full bg-transparent text-white font-mono text-xs sm:text-sm placeholder-slate-500 tracking-wider outline-none px-3.5 py-2 uppercase"
+                    />
+                  </div>
+
+                  {/* Magnetic Submit Button */}
+                  <motion.button
+                    ref={btnRef}
+                    style={{ x: smoothBtnX, y: smoothBtnY }}
+                    onMouseMove={handleMagneticMove}
+                    onMouseLeave={handleMagneticLeave}
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="relative z-10 group/btn w-full sm:w-auto flex items-center justify-center gap-2 px-7 py-3.5 rounded-xl sm:rounded-full bg-gradient-to-r from-cyan-500 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white font-mono font-bold text-xs tracking-widest uppercase transition-all duration-300 disabled:opacity-50 cursor-pointer shrink-0 shadow-[0_0_20px_rgba(0,229,255,0.3)] hover:shadow-[0_0_35px_rgba(0,229,255,0.6)] active:scale-95"
+                  >
+                    {isSubmitting ? (
+                      <span className="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    ) : (
+                      <>
+                        <span>REQUEST ACCESS</span>
+                        <span className="text-sm transition-transform group-hover/btn:translate-x-1">
+                          ↗
+                        </span>
+                      </>
+                    )}
+                  </motion.button>
+                </motion.form>
+              ) : (
+                <div className="relative">
+                  {/* Stardust Particle Burst */}
+                  <div className="pointer-events-none absolute inset-0 flex items-center justify-center z-20">
+                    {burstParticles.map((p, idx) => (
+                      <motion.span
+                        key={idx}
+                        initial={{ x: 0, y: 0, opacity: 1, scale: 0 }}
+                        animate={{
+                          x: p.x,
+                          y: p.y,
+                          opacity: [0, 1, 0],
+                          scale: [0, p.scale, 0],
+                        }}
+                        transition={{
+                          duration: 1.1,
+                          ease: "easeOut",
+                          delay: idx * 0.02,
+                        }}
+                        className="absolute w-2 h-2 rounded-full blur-[0.5px]"
+                        style={{
+                          backgroundColor: p.color,
+                          boxShadow: `0 0 12px ${p.color}`,
+                        }}
+                      />
+                    ))}
+                  </div>
+
+                  <motion.div
+                    key="waitlist-confirmed"
+                    initial={{ opacity: 0, scale: 0.92 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                    className="relative overflow-hidden flex flex-col items-center justify-center p-6 rounded-2xl sm:rounded-3xl bg-cyan-950/40 border border-cyan-400/40 backdrop-blur-2xl text-center shadow-[0_0_50px_rgba(0,229,255,0.25)]"
+                  >
+                    <BorderBeam
+                      colorFrom="#00e5ff"
+                      colorTo="#c084fc"
+                      duration={8}
+                      size={200}
+                      borderWidth={2}
+                    />
+
+                    <div className="flex items-center gap-2 text-cyan-300 font-mono text-xs tracking-widest uppercase mb-2">
+                      <span className="w-2 h-2 rounded-full bg-cyan-400 animate-ping" />
+                      <span className="font-bold">INVITATION RESERVED // {token}</span>
+                    </div>
+                    <p className="text-xs sm:text-sm text-slate-300 max-w-md font-light">
+                      Transmission encrypted. Your priority verification packet has been scheduled for delivery to <span className="text-cyan-300 font-mono font-medium">{email}</span>.
+                    </p>
+                  </motion.div>
+                </div>
+              )}
+            </AnimatePresence>
+
+            <p className="mt-5 font-mono text-[11px] text-slate-400 tracking-[0.2em] uppercase">
+              [ EXCLUSIVE COHORT ACCESS // LIMITED SLOTS 2026 ]
+            </p>
+          </motion.div>
         </motion.div>
 
-        {/* Services Showcase Section */}
-        <motion.div 
-          className="flex flex-col items-center w-full mb-12 text-center"
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-        >
-           <motion.h2 variants={itemVariants} className="font-heading text-3xl sm:text-4xl font-bold mb-4 tracking-tight">Our Expertise</motion.h2>
-           <motion.div variants={itemVariants} className="h-1 w-20 bg-gradient-to-r from-amber-400 to-rose-500 rounded-full mb-12"></motion.div>
-        </motion.div>
-
-        <motion.div 
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full"
+        {/* Capabilities Section Header */}
+        <motion.div
+          className="flex flex-col items-start w-full mb-12 text-left max-w-6xl mx-auto border-t border-white/10 pt-10"
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, margin: "-50px" }}
+          viewport={{ once: true, margin: "-80px" }}
         >
-          {services.map((service, index) => (
-            <motion.div 
-              key={index}
-              variants={itemVariants}
-              whileHover={{ y: -6 }}
-              whileTap={{ scale: 0.98 }}
-              className="group relative flex flex-col p-8 rounded-3xl bg-white/[0.03] border border-white/10 backdrop-blur-2xl transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] hover:bg-white/[0.06] hover:border-white/20 cursor-default shadow-xl hover:shadow-[0_8px_40px_rgba(251,191,36,0.12)] overflow-hidden"
-            >
-              <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-white/[0.12] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
-              <div className="absolute -inset-1 bg-gradient-to-r from-amber-500 via-rose-500 to-orange-500 rounded-3xl blur opacity-0 group-hover:opacity-15 transition duration-700 group-hover:duration-300"></div>
-              
-              <div className="relative z-10">
-                <h3 className="font-heading text-xl font-bold text-white mb-3 tracking-wide transition-colors duration-500 group-hover:text-amber-100">{service.title}</h3>
-                <p className="text-sm text-neutral-400 leading-relaxed font-light">{service.description}</p>
-              </div>
-            </motion.div>
+          <motion.div variants={itemVariants} className="flex items-center gap-3 mb-3">
+            <span className="w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_8px_#00e5ff]" />
+            <span className="font-mono text-xs uppercase tracking-[0.25em] text-cyan-300/90 font-semibold">
+              01 // CORE CAPABILITIES INDEX
+            </span>
+          </motion.div>
+          <motion.h2
+            variants={itemVariants}
+            className="font-heading text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-white uppercase"
+          >
+            Engineering What&apos;s Next
+          </motion.h2>
+          <motion.p
+            variants={itemVariants}
+            className="text-slate-400 text-sm sm:text-base mt-2 max-w-2xl font-light"
+          >
+            Synthesizing high-art cinematic storytelling, architectural brand identity, and next-generation software execution.
+          </motion.p>
+        </motion.div>
+
+        {/* Capabilities Grid (8 Modules) */}
+        <motion.div
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full max-w-6xl mx-auto"
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-60px" }}
+        >
+          {services.map((service) => (
+            <CapabilityCard key={service.id} service={service} variants={itemVariants} />
           ))}
         </motion.div>
-        
       </div>
+
+      {/* System Telemetry Footer */}
+      <footer className="relative z-10 w-full max-w-6xl mx-auto px-4 sm:px-6 py-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 font-mono text-xs text-slate-400 uppercase tracking-widest">
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
+            <span className="text-slate-300 font-medium">CORE ENGINE: ACTIVE</span>
+          </div>
+          <span className="text-white/15 hidden sm:inline">|</span>
+          <span className="hidden sm:inline text-slate-400">ENCRYPTION: QUANTUM-GRADE</span>
+        </div>
+
+        <div className="flex items-center gap-6 text-[11px] text-slate-400">
+          <span className="text-cyan-400/80">AUTHENTICATED DIGITAL PRESENCE</span>
+          <span className="text-white/15">/</span>
+          <span>© 2026 ATELIER LABS</span>
+        </div>
+      </footer>
     </main>
   );
 }
