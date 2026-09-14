@@ -10,9 +10,7 @@ import {
 } from "framer-motion";
 import ConstellationCanvas from "@/components/ConstellationCanvas";
 import CursorGlow from "@/components/CursorGlow";
-import AtelierHeader from "@/components/AtelierHeader";
 import CapabilityCard, { type ServiceItem } from "@/components/CapabilityCard";
-import LaunchCountdown from "@/components/LaunchCountdown";
 import BorderBeam from "@/components/BorderBeam";
 
 const services: ServiceItem[] = [
@@ -210,12 +208,6 @@ export default function Home() {
     }, 850);
   };
 
-  const scrollToWaitlist = () => {
-    if (waitlistRef.current) {
-      waitlistRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
-    }
-  };
-
   // Stardust particle burst generation for celebration
   const burstParticles = Array.from({ length: 14 }).map((_, i) => {
     const angle = (i / 14) * Math.PI * 2;
@@ -263,11 +255,8 @@ export default function Home() {
         <div className="absolute inset-0 bg-noise" />
       </div>
 
-      {/* Floating Atelier Navigation Header */}
-      <AtelierHeader onWaitlistClick={scrollToWaitlist} />
-
       {/* Main Experience Container */}
-      <div className="relative z-10 w-full max-w-6xl mx-auto px-4 sm:px-6 flex flex-col items-center flex-grow pt-12 sm:pt-16 pb-20">
+      <div className="relative z-10 w-full max-w-6xl mx-auto px-4 sm:px-6 flex flex-col items-center flex-grow pt-16 sm:pt-24 pb-20">
         {/* Hero Section */}
         <motion.div
           className="flex flex-col items-center justify-center text-center max-w-4xl mx-auto min-h-[64vh] mb-20 sm:mb-28"
@@ -278,7 +267,7 @@ export default function Home() {
           {/* Luminous Status Badge */}
           <motion.div
             variants={itemVariants}
-            className="inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-white/[0.04] border border-white/15 backdrop-blur-xl mb-4 shadow-[0_0_20px_rgba(0,229,255,0.1)] hover:border-cyan-400/40 transition-colors cursor-default"
+            className="inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-white/[0.04] border border-white/15 backdrop-blur-xl mb-8 shadow-[0_0_20px_rgba(0,229,255,0.1)] hover:border-cyan-400/40 transition-colors cursor-default"
           >
             <div className="relative flex items-center justify-center">
               <span className="w-2 h-2 rounded-full bg-cyan-400 animate-ping opacity-75" />
@@ -287,11 +276,6 @@ export default function Home() {
             <span className="font-mono text-[11px] tracking-[0.25em] text-slate-300 font-semibold uppercase">
               SYS.STATUS // PHASE ONE ACTIVE
             </span>
-          </motion.div>
-
-          {/* Genesis Launch Countdown Ticker */}
-          <motion.div variants={itemVariants}>
-            <LaunchCountdown />
           </motion.div>
 
           {/* Hero Headline */}
